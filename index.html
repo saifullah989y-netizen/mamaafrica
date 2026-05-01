@@ -148,6 +148,11 @@
   .hero-title .one { color: var(--red); }
   .hero-title .v { color: var(--gold); font-style: italic; }
   .hero-title .accent { color: transparent; -webkit-text-stroke: 1.5px var(--gold); }
+  .title-line-1 { display: block; }
+  .title-line-2 { display: block; margin-top: 28px; }
+  @media (max-width: 600px) {
+    .title-line-2 { margin-top: 12px; }
+  }
 
   .hero-sub {
     font-family: var(--heavy);
@@ -947,8 +952,8 @@
     <div>
       <div class="hero-eyebrow">Futsal · 1v1 Showcase</div>
       <h1 class="hero-title">
-        <span>Mama</span> <span class="accent">Africa</span><br/>
-        <span class="one">1</span><span class="v">v</span><span class="one">1</span> Showcase
+        <span class="title-line-1">Mama <span class="accent">Africa</span></span>
+        <span class="title-line-2"><span class="one">1</span><span class="v">v</span><span class="one">1</span> Showcase</span>
       </h1>
       <p class="hero-sub">Compete<span>.</span> Connect<span>.</span> Support the Journey<span>.</span></p>
 
