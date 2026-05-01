@@ -45,7 +45,7 @@
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  .container { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 22px; }
+  .container { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 24px; }
 
   /* === NAV === */
   .nav {
@@ -73,9 +73,11 @@
   }
   .nav-cta:hover { background: var(--red-deep); transform: translateY(-1px); }
   @media (max-width: 600px) {
-    .nav-cta { padding: 9px 14px; font-size: 10px; }
-    .nav-logo { height: 32px; }
-    .nav-x { font-size: 14px; }
+    .nav-cta { padding: 9px 12px; font-size: 9px; letter-spacing: 0.08em; }
+    .nav-logo { height: 28px; }
+    .nav-x { font-size: 13px; }
+    .nav-logos { gap: 10px; }
+    .nav-inner { padding: 10px 16px; }
   }
 
   /* === HERO === */
@@ -116,7 +118,10 @@
     position: relative; z-index: 2;
     flex: 1;
     display: flex; align-items: center;
-    padding: 30px 0 60px;
+    padding: 30px 22px 60px;
+  }
+  @media (max-width: 600px) {
+    .hero-inner { padding: 18px 24px 44px; }
   }
 
   .hero-eyebrow {
@@ -131,7 +136,7 @@
 
   .hero-title {
     font-family: var(--display);
-    font-size: clamp(54px, 10.5vw, 152px);
+    font-size: clamp(42px, 10.5vw, 152px);
     line-height: 0.86;
     letter-spacing: -0.005em;
     margin: 0 0 18px;
@@ -861,14 +866,62 @@
   .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
   .reveal.in { opacity: 1; transform: translateY(0); }
 
+  /* ===== MOBILE RESPONSIVE ===== */
   @media (max-width: 600px) {
-    .hero { padding: 95px 0 0; }
-    .hero-inner { padding: 20px 0 50px; }
-    .hero-meta { gap: 18px 28px; }
-    .div-num { font-size: 78px; top: 8px; right: 16px; }
-    .div-card { padding: 32px 24px 28px; }
-    .pricing { padding: 70px 0; }
-    .register { padding: 70px 0; }
+    /* Layout — extra breathing room on mobile */
+
+    /* Hero */
+    .hero { padding: 90px 0 0; min-height: 100svh; }
+    .hero-eyebrow { font-size: 10px; letter-spacing: 0.18em; margin-bottom: 14px; }
+    .hero-title { font-size: clamp(36px, 13vw, 54px); line-height: 0.88; margin-bottom: 14px; }
+    .hero-sub { font-size: 11px; letter-spacing: 0.14em; margin-bottom: 22px; }
+    .hero-meta { gap: 16px 24px; margin-bottom: 26px; }
+    .hero-meta-item .value { font-size: 18px; }
+    .hero-cta-row { flex-direction: column; align-items: flex-start; gap: 14px; }
+    .btn-primary { padding: 16px 24px; font-size: 11px; width: 100%; justify-content: center; }
+
+    /* Mission */
+    .mission { padding: 56px 0; }
+    .mission-title { font-size: clamp(32px, 10vw, 48px); }
+    .mission-photo-frame { height: 300px; }
+    .mission-links { flex-direction: column; gap: 10px; }
+    .link-pill { font-size: 10px; width: 100%; justify-content: space-between; }
+
+    /* Pricing / Divisions */
+    .pricing { padding: 60px 0; }
+    .pricing-title { font-size: clamp(36px, 11vw, 60px); }
+    .div-card { padding: 28px 20px 24px; }
+    .div-num { font-size: 70px; top: 8px; right: 14px; }
+    .div-title { font-size: clamp(28px, 9vw, 40px); }
+    .div-stats { grid-template-columns: 1fr 1fr; }
+    .div-stat .val { font-size: clamp(24px, 8vw, 34px); }
+    .div-cta { padding: 14px 18px; font-size: 10px; }
+
+    /* Registration */
+    .register { padding: 60px 0; }
+    .register-title { font-size: clamp(38px, 12vw, 72px); }
+    .register-sub { font-size: 14px; }
+    .form-card { padding: 28px 18px; }
+    .division-toggle { gap: 8px; }
+    .div-toggle-btn { padding: 14px 12px; }
+    .div-toggle-btn .dt-price { font-size: 20px; }
+    .form-field input { padding: 13px 14px; font-size: 14px; }
+    .pay-summary { flex-direction: column; align-items: flex-start; gap: 10px; padding: 16px; }
+    #submitBtn { font-size: 11px; padding: 16px 20px; }
+
+    /* Schedule */
+    .schedule { padding: 60px 0; }
+
+    /* Footer */
+    footer { padding: 50px 0 32px; }
+    .footer-links { flex-direction: column; gap: 12px; align-items: flex-start; }
+  }
+
+  @media (max-width: 380px) {
+    .hero-title { font-size: 32px; }
+    .hero-sub { font-size: 10px; }
+    .btn-primary { font-size: 10px; letter-spacing: 0.1em; }
+    .div-stat .val { font-size: 22px; }
   }
 </style>
 </head>
