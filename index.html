@@ -1178,12 +1178,76 @@
   </div>
 </footer>
 
+<!-- ===== PAYMENT POPUP ===== -->
+<div id="paymentPopup" style="
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.92);
+  z-index:9999;
+  align-items:center;
+  justify-content:center;
+  backdrop-filter:blur(4px);
+">
+  <div style="
+    background:#111;
+    padding:36px 32px;
+    border:2px solid var(--gold);
+    text-align:center;
+    max-width:420px;
+    width:90%;
+    border-radius:10px;
+    box-shadow:0 0 40px rgba(212,168,73,0.25);
+    position:relative;
+  ">
+    <div style="font-size:40px;margin-bottom:12px;">✅</div>
+    <h2 style="color:var(--gold);margin:0 0 10px;font-family:'Anton',sans-serif;font-size:28px;text-transform:uppercase;letter-spacing:0.05em;">
+      Registration Saved!
+    </h2>
+    <p style="color:var(--bone);opacity:0.85;margin:0 0 10px;font-size:15px;line-height:1.5;">
+      Your spot is <strong style="color:var(--gold)">reserved</strong>.<br>
+      Complete payment to <strong>lock it in</strong>.
+    </p>
+    <p style="color:var(--muted);font-size:12px;margin:0 0 24px;">
+      Your info has been saved to our player list.
+    </p>
+    <a id="paymentBtn" href="#" target="_blank" style="display:inline-block;width:100%;">
+      <button style="
+        width:100%;
+        padding:18px 24px;
+        background:var(--red);
+        color:#fff;
+        border:none;
+        border-radius:6px;
+        cursor:pointer;
+        font-family:'Archivo Black',sans-serif;
+        font-size:14px;
+        letter-spacing:0.15em;
+        text-transform:uppercase;
+        box-shadow:0 0 0 1px var(--red),5px 5px 0 0 var(--gold);
+        transition:all 0.2s ease;
+      " onmouseover="this.style.transform='translate(-2px,-2px)'" onmouseout="this.style.transform=''">
+        💳 Pay Now →
+      </button>
+    </a>
+    <p style="margin:16px 0 0;font-size:11px;color:var(--muted);">
+      🔒 Secure payment · Powered by FastPayDirect
+    </p>
+    <button onclick="document.getElementById('paymentPopup').style.display='none'" style="
+      position:absolute;top:12px;right:14px;
+      background:none;border:none;color:var(--muted);
+      font-size:20px;cursor:pointer;line-height:1;
+    ">✕</button>
+  </div>
+</div>
+
 <script>
   // ===== CONFIG =====
-  // Replace these with your actual Stripe Payment Links (or any payment provider URLs)
+  const SHEET_URL = "https://script.google.com/macros/s/AKfycbxwzE-dDTiCHbvISe66GZc7L1kmjhgUL64-nUoe85ooG4vdxiMd03dl5isxpoV-sZ6O8A/exec";
+
   const PAYMENT_LINKS = {
-    competitive: "REPLACE_WITH_COMPETITIVE_PAYMENT_LINK",  // $25 — e.g. Stripe Payment Link
-    open: "REPLACE_WITH_OPEN_PAYMENT_LINK"                 // $10 — e.g. Stripe Payment Link
+    open:        "https://link.fastpaydirect.com/payment-link/69f508e6b615f70a8a33b310",  // $10
+    competitive: "https://link.fastpaydirect.com/payment-link/69f508c1b615f70a8a33b30f"   // $25
   };
   const PRICES = { competitive: 25, open: 10 };
   // ==================
@@ -1207,7 +1271,6 @@
     toggleBtns.forEach(b => b.classList.toggle('active', b.dataset.div === div));
     totalEl.textContent = '$' + PRICES[div];
     submitBtn.textContent = 'Register & Pay $' + PRICES[div] + ' →';
-    // Highlight matching division card
     document.querySelectorAll('.div-card').forEach(c => {
       c.classList.toggle('selected', c.dataset.division === div);
     });
@@ -1215,7 +1278,6 @@
 
   toggleBtns.forEach(btn => btn.addEventListener('click', () => setDivision(btn.dataset.div)));
 
-  // Division card "Register" buttons → set toggle and scroll to form
   document.querySelectorAll('.div-cta').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.preventDefault();
@@ -1227,99 +1289,99 @@
 
   setDivision('competitive');
 
-  // Form validation + submit
+  // Form validation
   const form = document.getElementById('regForm');
-  const formSuccess = document.getElementById('formSuccess');
-  const manualLink = document.getElementById('manualPayLink');
+  const popup = document.getElementById('paymentPopup');
+  const paymentBtn = document.getElementById('paymentBtn');
 
   function validateField(field, condition) {
     const wrapper = field.closest('.form-field');
-    if (condition) {
-      wrapper.classList.remove('error');
-      return true;
-    } else {
-      wrapper.classList.add('error');
-      return false;
-    }
+    if (condition) { wrapper.classList.remove('error'); return true; }
+    else { wrapper.classList.add('error'); return false; }
   }
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     let valid = true;
 
-    const name = document.getElementById('fName');
-    valid = validateField(name, name.value.trim().length >= 2) && valid;
+    const nameEl  = document.getElementById('fName');
+    const phoneEl = document.getElementById('fPhone');
+    const emailEl = document.getElementById('fEmail');
+    const ageEl   = document.getElementById('fAge');
+    const liabilityEl = document.getElementById('fLiability');
 
-    const phone = document.getElementById('fPhone');
-    valid = validateField(phone, phone.value.replace(/\D/g, '').length >= 10) && valid;
+    valid = validateField(nameEl,  nameEl.value.trim().length >= 2) && valid;
+    valid = validateField(phoneEl, phoneEl.value.replace(/\D/g,'').length >= 10) && valid;
+    valid = validateField(emailEl, /^\S+@\S+\.\S+$/.test(emailEl.value.trim())) && valid;
+    const ageNum = parseInt(ageEl.value, 10);
+    valid = validateField(ageEl, !isNaN(ageNum) && ageNum >= 10 && ageNum <= 80) && valid;
 
-    const email = document.getElementById('fEmail');
-    valid = validateField(email, /^\S+@\S+\.\S+$/.test(email.value.trim())) && valid;
-
-    const age = document.getElementById('fAge');
-    const ageNum = parseInt(age.value, 10);
-    valid = validateField(age, !isNaN(ageNum) && ageNum >= 10 && ageNum <= 80) && valid;
-
-    const liability = document.getElementById('fLiability');
-    const liabilityWrap = liability.closest('.liability-box');
-    if (!liability.checked) {
-      liabilityWrap.style.borderColor = 'var(--red)';
-      valid = false;
-    } else {
-      liabilityWrap.style.borderColor = 'var(--line)';
-    }
+    const liabilityWrap = liabilityEl.closest('.liability-box');
+    if (!liabilityEl.checked) { liabilityWrap.style.borderColor = 'var(--red)'; valid = false; }
+    else liabilityWrap.style.borderColor = 'var(--line)';
 
     if (!valid) {
-      // scroll to first error
       const firstError = document.querySelector('.form-field.error');
       if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
 
-    // Build payment URL with player info as query params (Stripe / most providers respect prefilled email)
+    // Disable button while saving
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Saving…';
+
+    // Build payment link
     const paymentBase = PAYMENT_LINKS[selectedDivision];
+    const clientRef   = nameEl.value.trim().replace(/\s+/g,'_').toLowerCase()
+                        + '_' + Date.now();
     const params = new URLSearchParams({
-      prefilled_email: email.value.trim(),
-      'client_reference_id': name.value.trim().replace(/\s+/g, '_').toLowerCase()
+      prefilled_email:    emailEl.value.trim(),
+      client_reference_id: clientRef
     });
+    const payUrl = paymentBase + '?' + params.toString();
 
-    let payUrl = paymentBase;
-    if (paymentBase && !paymentBase.includes('REPLACE_WITH')) {
-      payUrl = paymentBase + (paymentBase.includes('?') ? '&' : '?') + params.toString();
-    }
+    // Set popup button target
+    paymentBtn.href = payUrl;
 
-    // Optional: send registration to a webhook / Google Form / Zapier before redirect
-    // Example placeholder — uncomment and replace with your endpoint:
-    /*
-    fetch('YOUR_WEBHOOK_URL', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        name: name.value, phone: phone.value, email: email.value,
-        age: age.value, division: selectedDivision, amount: PRICES[selectedDivision],
-        liability_accepted: true, timestamp: new Date().toISOString()
-      })
-    }).catch(()=>{});
-    */
+    // Send to Google Sheet (fire-and-forget — don't block popup on sheet failure)
+    const payload = {
+      name:      nameEl.value.trim(),
+      email:     emailEl.value.trim(),
+      phone:     phoneEl.value.trim(),
+      age:       ageEl.value.trim(),
+      division:  selectedDivision,
+      amount:    PRICES[selectedDivision],
+      paid:      'PENDING',
+      ref:       clientRef,
+      timestamp: new Date().toISOString()
+    };
 
-    // Show success and redirect
-    form.style.display = 'none';
-    formSuccess.classList.add('show');
-    manualLink.href = payUrl;
+    fetch(SHEET_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body:    JSON.stringify(payload)
+    })
+    .then(r => console.log('✅ Sheet saved'))
+    .catch(err => console.warn('⚠️ Sheet error (non-blocking):', err));
 
-    if (paymentBase && !paymentBase.includes('REPLACE_WITH')) {
-      setTimeout(() => { window.location.href = payUrl; }, 1500);
-    }
+    // Show popup immediately — don't wait for sheet
+    popup.style.display = 'flex';
+    submitBtn.textContent = 'Saved ✓';
   });
 
   // Clear error state on input
-  ['fName', 'fPhone', 'fEmail', 'fAge'].forEach(id => {
+  ['fName','fPhone','fEmail','fAge'].forEach(id => {
     document.getElementById(id).addEventListener('input', (e) => {
       e.target.closest('.form-field').classList.remove('error');
     });
   });
   document.getElementById('fLiability').addEventListener('change', (e) => {
     e.target.closest('.liability-box').style.borderColor = 'var(--line)';
+  });
+
+  // Close popup on backdrop click
+  popup.addEventListener('click', (e) => {
+    if (e.target === popup) popup.style.display = 'none';
   });
 </script>
 
